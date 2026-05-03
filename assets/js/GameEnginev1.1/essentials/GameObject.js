@@ -234,13 +234,15 @@ class GameObject {
         const otherRight = otherRect.right - otherWidthReduction;
         const otherBottom = otherRect.bottom;
 
-        // Determine hit and touch points of hit
-        const hit = (
-            thisLeft < otherRight &&
-            thisRight > otherLeft &&
-            thisTop < otherBottom &&
-            thisBottom > otherTop
-        );
+        // Circular collision detection (default and only option)
+        const thisCenterX = (thisLeft + thisRight) / 2;
+        const thisCenterY = (thisTop + thisBottom) / 2;
+        const otherCenterX = (otherLeft + otherRight) / 2;
+        const otherCenterY = (otherTop + otherBottom) / 2;
+        const thisRadius = this.hitbox?.radius || Math.min(thisRight - thisLeft, thisBottom - thisTop) / 2;
+        const otherRadius = other.hitbox?.radius || Math.min(otherRight - otherLeft, otherBottom - otherTop) / 2;
+        const distance = Math.hypot(thisCenterX - otherCenterX, thisCenterY - otherCenterY);
+        const hit = distance < thisRadius + otherRadius;
 
         const touchPoints = {
             this: {
