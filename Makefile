@@ -75,6 +75,7 @@ endef
 
 default: serve-current
 	@touch /tmp/.notebook_watch_marker
+	@make watch-rebuild &
 	@make watch-notebooks &
 	@make watch-projects &
 	@make watch-files &
@@ -320,13 +321,14 @@ stop:
 	@echo "Stopping logging process..."
 	@@ps aux | awk -v log_file=$(LOG_FILE) '$$0 ~ "tail -f " log_file { print $$2 }' | xargs kill >/dev/null 2>&1 || true
 	@echo "Stopping notebook watcher..."
+	@@ps aux | grep "watch-rebuild" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@@ps aux | grep "watch-notebooks" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@@ps aux | grep "watch-projects" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@@ps aux | grep "find _notebooks" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@echo "Stopping project watchers..."
 	@@ps aux | grep "fswatch.*_projects" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@@ps aux | grep "make -C _projects" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
-	@rm -f $(LOG_FILE) /tmp/.notebook_watch_marker /tmp/.jekyll_regenerating
+	@rm -f $(LOG_FILE) /tmp/.notebook_watch_marker /tmp/.jekyll_regenerating /tmp/.jekyll_rebuild_trigger
 
 reload:
 	@make stop
@@ -337,6 +339,31 @@ refresh:
 	@make clean
 	@make
 
+# Debounced Jekyll rebuild - waits for changes to settle, then rebuilds once
+watch-rebuild:
+	@echo "Watching for rebuild triggers (debounced)..."
+	@LAST_TRIGGER=0; \
+	while true; do \
+		if [ -f /tmp/.jekyll_rebuild_trigger ]; then \
+			TRIGGER_TIME=$$(stat -f %m /tmp/.jekyll_rebuild_trigger 2>/dev/null || stat -c %Y /tmp/.jekyll_rebuild_trigger); \
+			if [ $$TRIGGER_TIME -gt $$LAST_TRIGGER ]; then \
+				echo "⏳ Changes detected, waiting for more changes to settle..."; \
+				sleep 3; \
+				NEW_TRIGGER=$$(stat -f %m /tmp/.jekyll_rebuild_trigger 2>/dev/null || stat -c %Y /tmp/.jekyll_rebuild_trigger); \
+				if [ $$NEW_TRIGGER -eq $$TRIGGER_TIME ]; then \
+					echo "🔨 Rebuilding Jekyll site..."; \
+					START=$$(date +%s); \
+					bundle exec jekyll build --incremental 2>&1 | tail -1; \
+					END=$$(date +%s); \
+					DURATION=$$((END - START)); \
+					echo "✓ Rebuild complete in $${DURATION}s"; \
+					LAST_TRIGGER=$$NEW_TRIGGER; \
+				fi; \
+			fi; \
+		fi; \
+		sleep 1; \
+	done
+
 # Development mode: clean start, no conversion, converts files on save
 # Runs in background - use 'make stop' to stop, 'tail -f /tmp/jekyll4500.log' to view logs
 dev: stop clean
@@ -344,6 +371,7 @@ dev: stop clean
 	@$(MAKE) build-dev-projects ORIGINAL_GOALS="$(ORIGINAL_GOALS)"
 	@$(MAKE) convert-registered-notebooks ORIGINAL_GOALS="$(ORIGINAL_GOALS)"
 	@$(MAKE) jekyll-serve ORIGINAL_GOALS="$(ORIGINAL_GOALS)"
+	@$(MAKE) watch-rebuild ORIGINAL_GOALS="$(ORIGINAL_GOALS)" &
 	@$(MAKE) watch-notebooks ORIGINAL_GOALS="$(ORIGINAL_GOALS)" &
 	@$(MAKE) watch-projects ORIGINAL_GOALS="$(ORIGINAL_GOALS)" &
 	@$(MAKE) watch-files ORIGINAL_GOALS="$(ORIGINAL_GOALS)" &
@@ -360,7 +388,8 @@ watch-notebooks:
 	@while true; do \
 		find _notebooks -name '*.ipynb' -newer /tmp/.notebook_watch_marker -print 2>/dev/null | while read notebook; do \
 			echo "Notebook changed: $$notebook"; \
-			make convert-single NOTEBOOK_FILE="$$notebook" & \
+			make convert-single NOTEBOOK_FILE="$$notebook"; \
+			touch /tmp/.jekyll_rebuild_trigger; \
 		done; \
 		touch /tmp/.notebook_watch_marker; \
 		sleep 2; \
@@ -373,7 +402,8 @@ watch-projects:
 			echo "Project file changed: $$file"; \
 			proj=$$(echo "$$file" | cut -d/ -f2); \
 			if [ -f "_projects/$$proj/Makefile" ]; then \
-				make -C "_projects/$$proj" build & \
+				make -C "_projects/$$proj" build; \
+				touch /tmp/.jekyll_rebuild_trigger; \
 			fi; \
 		done; \
 		touch /tmp/.project_watch_marker; \
@@ -388,16 +418,17 @@ bundle-install:
 		mkdir -p .bundle && touch .bundle/install_marker; \
 	fi
 
-# Start Jekyll server (incremental for development, production is GitHub Actions)
+# Start Jekyll server (no auto-watch, we control rebuilds manually)
 # Supports optional _config.local.yml override for local settings (e.g. baseurl)
 jekyll-serve: bundle-install
 	@touch /tmp/.notebook_watch_marker
+	@rm -f /tmp/.jekyll_rebuild_trigger
 	@if [ -f _config.local.yml ]; then \
 		echo "Using local config override: _config.local.yml"; \
-		bundle exec jekyll serve -H $(HOST) -P $(PORT) --incremental --config _config.yml,_config.local.yml > $(LOG_FILE) 2>&1 & \
+		bundle exec jekyll serve -H $(HOST) -P $(PORT) --no-watch --config _config.yml,_config.local.yml > $(LOG_FILE) 2>&1 & \
 		echo "Server PID: $$!"; \
 	else \
-		bundle exec jekyll serve -H $(HOST) -P $(PORT) --incremental > $(LOG_FILE) 2>&1 & \
+		bundle exec jekyll serve -H $(HOST) -P $(PORT) --no-watch > $(LOG_FILE) 2>&1 & \
 		echo "Server PID: $$!"; \
 	fi
 	@make wait-for-server
