@@ -239,8 +239,8 @@ class GameObject {
         const thisCenterY = (thisTop + thisBottom) / 2;
         const otherCenterX = (otherLeft + otherRight) / 2;
         const otherCenterY = (otherTop + otherBottom) / 2;
-        const thisRadius = this.hitbox?.radius || Math.min(thisRight - thisLeft, thisBottom - thisTop) / 2;
-        const otherRadius = other.hitbox?.radius || Math.min(otherRight - otherLeft, otherBottom - otherTop) / 2;
+        const thisRadiusPercent = this.hitbox?.radiusPercentage ?? 0.5;
+        const otherRadiusPercent = other.hitbox?.radiusPercentage ?? 0.5;
         const distance = Math.hypot(thisCenterX - otherCenterX, thisCenterY - otherCenterY);
         const hit = distance < thisRadius + otherRadius;
 
