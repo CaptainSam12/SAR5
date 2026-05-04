@@ -328,7 +328,7 @@ stop:
 	@echo "Stopping project watchers..."
 	@@ps aux | grep "fswatch.*_projects" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
 	@@ps aux | grep "make -C _projects" | grep -v grep | awk '{print $$2}' | xargs kill >/dev/null 2>&1 || true
-	@rm -f $(LOG_FILE) /tmp/.notebook_watch_marker /tmp/.jekyll_regenerating /tmp/.jekyll_rebuild_trigger
+	@rm -f $(LOG_FILE) /tmp/.notebook_watch_marker /tmp/.jekyll_regenerating /tmp/.jekyll_rebuild_trigger /tmp/.jekyll_rebuild_done /tmp/.jekyll_rebuild_log
 
 reload:
 	@make stop
@@ -353,9 +353,20 @@ watch-rebuild:
 				if [ $$NEW_TRIGGER -eq $$TRIGGER_TIME ]; then \
 					echo "🔨 Rebuilding Jekyll site..."; \
 					START=$$(date +%s); \
-					bundle exec jekyll build --incremental 2>&1 | tail -1; \
+					rm -f /tmp/.jekyll_rebuild_done; \
+					(bundle exec jekyll build --incremental > /tmp/.jekyll_rebuild_log 2>&1; touch /tmp/.jekyll_rebuild_done) & \
+					REBUILD_PID=$$!; \
+					COUNTER=0; \
+					while [ ! -f /tmp/.jekyll_rebuild_done ]; do \
+						sleep 1; \
+						COUNTER=$$((COUNTER + 1)); \
+						if [ $$((COUNTER % 10)) -eq 0 ] && [ $$COUNTER -gt 0 ]; then \
+							echo "  Still rebuilding... ($$COUNTER seconds elapsed)"; \
+						fi; \
+					done; \
 					END=$$(date +%s); \
 					DURATION=$$((END - START)); \
+					tail -1 /tmp/.jekyll_rebuild_log; \
 					echo "✓ Rebuild complete in $${DURATION}s"; \
 					LAST_TRIGGER=$$NEW_TRIGGER; \
 				fi; \
