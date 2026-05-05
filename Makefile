@@ -208,7 +208,6 @@ convert-registered-notebooks:
 			proj_name=$$(basename $$proj); \
 			if [ -d "_notebooks/projects/$$proj_name" ]; then \
 				find "_notebooks/projects/$$proj_name" -name '*.ipynb' 2>/dev/null | while read notebook; do \
-					echo "Converting dev project notebook: $$notebook"; \
 					make convert-single NOTEBOOK_FILE="$$notebook" 2>&1; \
 				done; \
 			fi; \
@@ -440,7 +439,6 @@ watch-projects:
 				proj_name=$$(basename $$proj); \
 				if [ -d "_notebooks/projects/$$proj_name" ]; then \
 					find "_notebooks/projects/$$proj_name" -name '*.ipynb' -newer /tmp/.project_watch_marker 2>/dev/null | while read notebook; do \
-						echo "Converting project notebook: $$notebook"; \
 						make convert-single NOTEBOOK_FILE="$$notebook" 2>&1; \
 					done; \
 				fi; \
