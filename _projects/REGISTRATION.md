@@ -17,7 +17,7 @@ A simple text file in the root listing enabled projects:
 # Supports both flat and nested structures
 
 # Nested projects (organized by category)
-games/cs-pathway-game:dev
+games/cs-pathway:dev
 lessons/collision-mechanics
 systems/student-management
 
@@ -205,11 +205,11 @@ Output:
 
 ```text
 📦 Registered Projects:
-  ✅ cs-pathway-game (active)
+  ✅ cs-pathway (active)
   ⚠️  broken-project (missing Makefile.fragment)
 
 Available projects (in _projects/ directory):
-  • cs-pathway-game (registered)
+  • cs-pathway (registered)
   • new-project (not registered)
 ```
 
@@ -251,7 +251,7 @@ Comment out in `.makeprojects`:
 # Temporarily disabled
 # old-project
 
-cs-pathway-game
+cs-pathway
 ```
 
 Or remove the line entirely.
@@ -262,7 +262,7 @@ Uncomment in `.makeprojects`:
 
 ```text
 old-project    # Re-enabled!
-cs-pathway-game
+cs-pathway
 ```
 
 ## Integration with Main Makefile Targets
@@ -274,7 +274,7 @@ Projects can integrate with dev workflow:
 ```makefile
 # In Makefile
 dev: ...existing targets...
- @make watch-cs-pathway-game &
+ @make watch-cs-pathway &
  @make watch-other-project &
 ```
 
@@ -435,7 +435,7 @@ The `.makeprojects` file now supports a minimal metadata format for each project
 
 ```text
 # Format: name[:yes]
-cs-pathway-game:yes
+cs-pathway:yes
 quiz-game
 docs-only-project
 ```
@@ -446,8 +446,8 @@ docs-only-project
 **Example:**
 
 ```text
-# Only cs-pathway-game is included in make dev by default
-cs-pathway-game:yes
+# Only cs-pathway is included in make dev by default
+cs-pathway:yes
 quiz-game
 docs-only-project
 ```
@@ -476,7 +476,7 @@ docs-only-project
    sed -i '' 's/^quiz-game:yes$/quiz-game/' .makeprojects
    ```
 
-**Note:** The `make dev` target should be minimal by default. Only essential projects (e.g., `cs-pathway-game`) are included unless explicitly enabled.
+**Note:** The `make dev` target should be minimal by default. Only essential projects (e.g., `cs-pathway`) are included unless explicitly enabled.
 
 ### Validation Target
 
@@ -495,17 +495,17 @@ validate-projects:
 
 ```makefile
 # In Makefile - hardcoded!
-include _projects/cs-pathway-game/Makefile
+include _projects/cs-pathway/Makefile
 include _projects/quiz-game/Makefile
 include _projects/another-game/Makefile
 
 dev:
- @make watch-cs-pathway-game &
+ @make watch-cs-pathway &
  @make watch-quiz-game &
  @make watch-another-game &
 
 clean:
- @make cs-pathway-game-clean
+ @make cs-pathway-clean
  @make quiz-game-clean
  @make another-game-clean
 ```
@@ -519,7 +519,7 @@ clean:
 # In .makeprojects
 ```text
 # Format: name[:dev]
-cs-pathway-game:dev
+cs-pathway:dev
 quiz-game
 docs-only-project
 ```
@@ -530,8 +530,8 @@ docs-only-project
 **Example:**
 
 ```text
-# Only cs-pathway-game is included in make dev by default
-cs-pathway-game:dev
+# Only cs-pathway is included in make dev by default
+cs-pathway:dev
 quiz-game
 docs-only-project
 ```
@@ -560,4 +560,4 @@ docs-only-project
    sed -i '' 's/^quiz-game:dev$/quiz-game/' .makeprojects
    ```
 
-**Note:** The `make dev` target should be minimal by default. Only essential projects (e.g., `cs-pathway-game`) are included unless explicitly enabled.
+**Note:** The `make dev` target should be minimal by default. Only essential projects (e.g., `cs-pathway`) are included unless explicitly enabled.

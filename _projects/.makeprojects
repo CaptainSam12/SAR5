@@ -6,11 +6,14 @@
 # Projects with :dev suffix are auto-built in dev mode
 #
 # Format: <project-path> or <project-path>:dev
-# Example: games/cs-pathway-game:dev
+# Example: games/cs-pathway:dev
 
 # === NESTED STRUCTURE (organized by category) ===
 # Games
-games/PeppaPigGame
+games/cs-pathway:dev
+games/gamify
+games/peppa-pig
+games/ocean
 
 # Lessons
 lessons/game-lessons
@@ -19,10 +22,7 @@ lessons/game-lessons
 systems/test-project
 
 # === FLAT STRUCTURE (legacy/uncategorized) ===
-cs-pathway-game:dev
 characters
-gamify
-ocean
 teamtestgame
 student-management-groups
 game-in-game-lesson
