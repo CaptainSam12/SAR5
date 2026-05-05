@@ -15,6 +15,6 @@ permalink: /
   <meta http-equiv="refresh" content="0; url={{ site.baseurl }}/cs-pathway">
 </noscript>
 
-[Continue to the Gamified Home Pilot]({{ site.baseurl }}/cs-pathway-game)
+[Continue to the Gamified Home Pilot]({{ site.baseurl }}/cs-pathway)
 
 [Need older materials? Open the Legacy Home Materials Hub]({{ site.baseurl }}/home-legacy)

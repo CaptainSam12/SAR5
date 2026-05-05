@@ -59,7 +59,7 @@ class GameLevelCsPath1Way extends GameLevelCsPathIdentity {
      */
 
     // ── Background ──────────────────────────────────────────────
-    const image_src = path + "/images/projects/cs-pathway-game/bg1/wayfinding-world-fantasy.png";
+    const image_src = path + "/images/projects/cs-pathway/bg1/wayfinding-world-fantasy.png";
     const bg_data = {
       name: GameLevelCsPath1Way.displayName,
       greeting:
@@ -69,12 +69,12 @@ class GameLevelCsPath1Way extends GameLevelCsPathIdentity {
 
     this.restoreIdentitySelections({
       bgData: bg_data,
-      themeManifestUrl: `${path}/images/projects/cs-pathway-game/bg1/index.json`,
-      themeAssetPrefix: `${path}/images/projects/cs-pathway-game/bg1/`,
+      themeManifestUrl: `${path}/images/projects/cs-pathway/bg1/index.json`,
+      themeAssetPrefix: `${path}/images/projects/cs-pathway/bg1/`,
     });
 
     // ── Player ───────────────────────────────────────────────────
-    const player_src = path + "/images/projects/cs-pathway-game/player/minimalist.png";
+    const player_src = path + "/images/projects/cs-pathway/player/minimalist.png";
     const PLAYER_SCALE_FACTOR = 5;
     const player_data = {
       id: 'Minimalist_Identity',

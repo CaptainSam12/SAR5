@@ -4,7 +4,7 @@ import FriendlyNpc from '@assets/js/GameEnginev1.1/essentials/FriendlyNpc.js';
 import AiChallengeNpc, { CHALLENGE_ERROR_TYPES, CHALLENGE_VERDICTS } from '@assets/js/GameEnginev1.1/essentials/AiChallengeNpc.js';
 import GameLevelCsPathIdentity from './GameLevelCsPathIdentity.js';
 import StatusPanel from '@assets/js/GameEnginev1.1/essentials/StatusPanel.js';
-import ProfileManager from '/assets/js/projects/cs-pathway-game/model/ProfileManager.js';
+import ProfileManager from '/assets/js/projects/cs-pathway/model/ProfileManager.js';
 
 // Prompt templates for AI question generation and grading.
 const CHALLENGE_PROMPT_TEXT = {
@@ -191,7 +191,7 @@ class GameLevelCsPath2Mission extends GameLevelCsPathIdentity {
      */
 
     // ── Background ──────────────────────────────────────────────
-    const image_src = path + "/images/projects/cs-pathway-game/bg2/mission-tools-fantasy.png";
+    const image_src = path + "/images/projects/cs-pathway/bg2/mission-tools-fantasy.png";
     const bg_data = {
         name: GameLevelCsPath2Mission.displayName,
         greeting: "Welcome to the CS pathway! This quest will prepare you for your mission ahead by introducing your essential tools and resources!",
@@ -200,8 +200,8 @@ class GameLevelCsPath2Mission extends GameLevelCsPathIdentity {
 
     this.restoreIdentitySelections({
       bgData: bg_data,
-      themeManifestUrl: `${path}/images/projects/cs-pathway-game/bg2/index.json`,
-      themeAssetPrefix: `${path}/images/projects/cs-pathway-game/bg2/`,
+      themeManifestUrl: `${path}/images/projects/cs-pathway/bg2/index.json`,
+      themeAssetPrefix: `${path}/images/projects/cs-pathway/bg2/`,
     });
 
     // FriendlyNpc looks up toast via gameEnv.currentLevel/gameLevel in this engine build.
@@ -209,7 +209,7 @@ class GameLevelCsPath2Mission extends GameLevelCsPathIdentity {
     this.gameEnv.gameLevel = this;
     
     // ── Player ───────────────────────────────────────────────────
-    const player_src = path + "/images/projects/cs-pathway-game/player/minimalist.png";
+    const player_src = path + "/images/projects/cs-pathway/player/minimalist.png";
     const PLAYER_SCALE_FACTOR = 5;
     const player_data = {
       id: 'Minimalist_Identity',
@@ -239,7 +239,7 @@ class GameLevelCsPath2Mission extends GameLevelCsPathIdentity {
     });
 
     const gatekeeperBaseData = {
-      src: path + '/images/projects/cs-pathway-game/npc/gatekeeper2.png',
+      src: path + '/images/projects/cs-pathway/npc/gatekeeper2.png',
       SCALE_FACTOR: PLAYER_SCALE_FACTOR,
       ANIMATION_RATE: 50,
       pixels: { width: 1024, height: 1024 },

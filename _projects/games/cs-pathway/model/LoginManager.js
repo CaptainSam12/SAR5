@@ -8,7 +8,7 @@
  *   - API logic lives here, not in game level controllers
  *   - All public methods return { success, code, body } JSON
  *   - UI (showPanel) accepts a theme object so it stays game-neutral
- *   - Long-term home: /assets/js/api/ (not cs-pathway-game specific)
+ *   - Long-term home: /assets/js/api/ (not cs-pathway specific)
  *
  * API endpoints used:
  *   POST /api/authenticate  - Login (Flask)

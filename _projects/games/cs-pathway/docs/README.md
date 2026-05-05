@@ -4,7 +4,7 @@ title: CS Pathway Game - Overview
 description: Complete documentation for the CS Pathway Game project with unified source-of-truth structure
 category: Gamify
 breadcrumb: true
-permalink: /cs-pathway-game/overview
+permalink: /cs-pathway/overview
 ---
 
 ## Directory Structure
@@ -12,7 +12,7 @@ permalink: /cs-pathway-game/overview
 Project-facing source lives in one project directory.
 
 ```text
-_projects/cs-pathway-game/
+_projects/cs-pathway/
 ├── notebook.src.ipynb
 ├── levels/
 ├── model/
@@ -23,10 +23,10 @@ _projects/cs-pathway-game/
 
 Runtime/distributed outputs are generated into GitHub Pages folder by Makefile:
 
-- _notebooks/projects/cs-pathway-game/
-- _posts/projects/cs-pathway-game/
-- assets/js/projects/cs-pathway-game/
-- images/projects/cs-pathway-game/
+- _notebooks/projects/cs-pathway/
+- _posts/projects/cs-pathway/
+- assets/js/projects/cs-pathway/
+- images/projects/cs-pathway/
 
 ## Build + Dev Workflow
 
@@ -59,8 +59,8 @@ Use this when:
 - You want to isolate one project's distribution behavior while debugging.
 
 ```bash
-make -C _projects/cs-pathway-game build
-make -C _projects/cs-pathway-game docs # docs are not in make dev
+make -C _projects/cs-pathway build
+make -C _projects/cs-pathway docs # docs are not in make dev
 ```
 
 Validate all registered projects when you need a repo-wide distribution refresh or consistency check.
@@ -89,8 +89,8 @@ GitHub Actions uses the same registered targets:
 
 Expected Actions log lines for project-level visibility:
 
-- `📦 Building project: cs-pathway-game`
-- `📚 Building docs for: cs-pathway-game`
+- `📦 Building project: cs-pathway`
+- `📚 Building docs for: cs-pathway`
 
 If docs verification is enabled in workflow, expect summary lines similar to:
 
@@ -105,9 +105,9 @@ Use runtime absolute paths in code.
 
 ```javascript
 import GameControl from '@assets/js/GameEnginev1.1/essentials/GameControl.js';
-import { ProfileManager } from '@assets/js/projects/cs-pathway-game/model/ProfileManager.js';
+import { ProfileManager } from '@assets/js/projects/cs-pathway/model/ProfileManager.js';
 
-const bg = this.gameEnv.path + '/images/projects/cs-pathway-game/backgrounds/forest.png';
+const bg = this.gameEnv.path + '/images/projects/cs-pathway/backgrounds/forest.png';
 ```
 
 ## Registration Model
@@ -126,13 +126,13 @@ Track source files in _projects. Treat distributed files as generated artifacts.
 
 ```gitignore
 # Track source
-!_projects/cs-pathway-game/**
+!_projects/cs-pathway/**
 
 # Ignore generated distribution
-_notebooks/projects/cs-pathway-game/
-assets/js/projects/cs-pathway-game/
-images/projects/cs-pathway-game/
-_posts/projects/cs-pathway-game/
+_notebooks/projects/cs-pathway/
+assets/js/projects/cs-pathway/
+images/projects/cs-pathway/
+_posts/projects/cs-pathway/
 ```
 
 ## Notes

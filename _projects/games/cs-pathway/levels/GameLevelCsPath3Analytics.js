@@ -205,7 +205,7 @@ class GameLevelCsPath3Analytics extends GameLevelCsPathIdentity {
     this.profilePanelView.update({ grade: '—' });
 
     // ── Background ──────────────────────────────────────────────
-    const image_src = path + "/images/projects/cs-pathway-game/bg3/assessment-observatory-fantasy.png";
+    const image_src = path + "/images/projects/cs-pathway/bg3/assessment-observatory-fantasy.png";
     const bg_data = {
       name: GameLevelCsPath3Analytics.displayName,
       greeting: "Welcome to the Assessment Observatory! Here you can explore your learning journey, track your progress, and discover insights from your contributions and achievements.",
@@ -214,12 +214,12 @@ class GameLevelCsPath3Analytics extends GameLevelCsPathIdentity {
 
     this.restoreIdentitySelections({
       bgData: bg_data,
-      themeManifestUrl: `${path}/images/projects/cs-pathway-game/bg3/index.json`,
-      themeAssetPrefix: `${path}/images/projects/cs-pathway-game/bg3/`,
+      themeManifestUrl: `${path}/images/projects/cs-pathway/bg3/index.json`,
+      themeAssetPrefix: `${path}/images/projects/cs-pathway/bg3/`,
     });
 
     // ── Player ───────────────────────────────────────────────────
-    const player_src = path + "/images/projects/cs-pathway-game/player/minimalist.png";
+    const player_src = path + "/images/projects/cs-pathway/player/minimalist.png";
     const PLAYER_SCALE_FACTOR = 5;
     const player_data = {
       id: 'Minimalist_Identity',

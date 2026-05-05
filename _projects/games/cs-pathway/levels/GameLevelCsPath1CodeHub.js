@@ -1098,10 +1098,10 @@ class GameLevelCsPath1CodeHub extends GameLevelCsPathIdentity {
     const bg_data = {
       name:     GameLevelCsPath1CodeHub.displayName,
       greeting: 'Welcome to the Code Hub.',
-      src:      path + '/images/projects/cs-pathway-game/bg-codehub/tech_hub_rpg_map.png',
+      src:      path + '/images/projects/cs-pathway/bg-codehub/tech_hub_rpg_map.png',
     };
 
-    this.primeAssetGate({ backgroundSrc: bg_data.src, playerSrc: path + '/images/projects/cs-pathway-game/player/minimalist.png' });
+    this.primeAssetGate({ backgroundSrc: bg_data.src, playerSrc: path + '/images/projects/cs-pathway/player/minimalist.png' });
 
     this.profileReady.then(async (restored) => {
       const sprite = restored?.profileData?.spriteMeta;
@@ -1113,7 +1113,7 @@ class GameLevelCsPath1CodeHub extends GameLevelCsPathIdentity {
     const player_data = {
       id:             'Minimalist_Identity',
       greeting:       'I am ready to learn!',
-      src:            path + '/images/projects/cs-pathway-game/player/minimalist.png',
+      src:            path + '/images/projects/cs-pathway/player/minimalist.png',
       SCALE_FACTOR:   SCALE,
       STEP_FACTOR:    1000,
       ANIMATION_RATE: 50,
@@ -1133,7 +1133,7 @@ class GameLevelCsPath1CodeHub extends GameLevelCsPathIdentity {
     };
 
     const npcBase = {
-      src:            path + '/images/projects/cs-pathway-game/npc/robotcharacter.png',
+      src:            path + '/images/projects/cs-pathway/npc/robotcharacter.png',
       SCALE_FACTOR:   SCALE,
       ANIMATION_RATE: 50,
       pixels:         { width: 1024, height: 1024 },

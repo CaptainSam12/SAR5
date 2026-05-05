@@ -4,7 +4,7 @@ title: CS Pathway Game - MVC Architecture
 description: MVC architecture and file organization for the CS Pathway Game project
 category: Gamify
 breadcrumb: true
-permalink: /cs-pathway-game/architecture
+permalink: /cs-pathway/architecture
 ---
 
 ## Overview
@@ -29,7 +29,7 @@ The CS Pathway game implements MVC architecture across the following file struct
 │        • Integrates all GameLevelCSPath*.js files                           │
 │                                                                             │
 │  ┌────────────────────────────────────────────────────────────────────┐     │
-│  │  📂 /_projects/cs-pathway-game/levels/        [CONTROLLER + VIEW]  │     │
+│  │  📂 /_projects/cs-pathway/levels/        [CONTROLLER + VIEW]  │     │
 │  │                                                                    │     │
 │  │  Game Level Controllers:                                           │     │
 │  │  ├─ GameLevelCSPath0Forge.js       Level 0: Identity Forge         │     │
@@ -64,7 +64,7 @@ The CS Pathway game implements MVC architecture across the following file struct
 │  └────────────────────────────────────────────────────────────────────┘     │
 │                                                                             │
 │  ┌────────────────────────────────────────────────────────────────────┐     │
-│  │  📂 /_projects/cs-pathway-game/model/                 [MODEL]      │     │
+│  │  📂 /_projects/cs-pathway/model/                 [MODEL]      │     │
 │  │                                                                    │     │
 │  │  Data Persistence Bridge:                                          │     │
 │  │  ├─ ProfileManager.js           Profile Orchestrator               │     │

@@ -4,7 +4,7 @@ title: CS Pathway Game - Build Integration
 description: Guide for integrating CS Pathway Game into Makefile and CI/CD workflows
 category: Gamify
 breadcrumb: true
-permalink: /cs-pathway-game/build-integration
+permalink: /cs-pathway/build-integration
 ---
 
 ## Adding CS Pathway Game to Build System
@@ -39,7 +39,7 @@ Each project Makefile must expose these generic targets:
 Add one line to `_projects/.makeprojects`:
 
 ```text
-cs-pathway-game
+cs-pathway
 ```
 
 No include lines are required in the root Makefile.
@@ -91,8 +91,8 @@ This is now the canonical CI integration point (not `make <project>-build`).
 Validate one project directly:
 
 ```bash
-make -C _projects/cs-pathway-game build
-make -C _projects/cs-pathway-game docs
+make -C _projects/cs-pathway build
+make -C _projects/cs-pathway docs
 ```
 
 Validate all registered projects:
@@ -104,9 +104,9 @@ make build-registered-docs
 
 Expected outputs:
 
-- Notebook: `_notebooks/projects/cs-pathway-game/<date>-cs-pathway-game.ipynb`
-- Assets: `assets/js/projects/cs-pathway-game/` and `images/projects/cs-pathway-game/`
-- Docs: `_posts/projects/cs-pathway-game/<date>-cs-pathway-game-*.md`
+- Notebook: `_notebooks/projects/cs-pathway/<date>-cs-pathway.ipynb`
+- Assets: `assets/js/projects/cs-pathway/` and `images/projects/cs-pathway/`
+- Docs: `_posts/projects/cs-pathway/<date>-cs-pathway-*.md`
 
 ## Troubleshooting
 
@@ -132,13 +132,13 @@ sudo yum install fswatch       # RedHat/CentOS
 2. Manually trigger copy to test:
 
    ```bash
-  make -C _projects/cs-pathway-game build
+  make -C _projects/cs-pathway build
    ```
 
 3. Check file permissions:
 
    ```bash
-   ls -la _projects/cs-pathway-game/
+   ls -la _projects/cs-pathway/
    ```
 
 ### Jekyll Not Regenerating After Copy
