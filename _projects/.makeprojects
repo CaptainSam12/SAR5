@@ -13,6 +13,7 @@
 games/cs-pathway:dev
 games/gamify
 games/peppa-pig
+games/red-riding
 games/ocean
 
 # Lessons
@@ -26,7 +27,6 @@ characters
 teamtestgame
 student-management-groups
 game-in-game-lesson
-red-riding
 barriers-spline-sorcerers
 platformer-gravity-sorcerers
 backgrounds
