@@ -72,11 +72,12 @@ assets:
 # Clean distributed files (keeps source intact)
 clean:
 	@echo "🧹 Cleaning $(PROJECT_NAME) distribution..."
-	@rm -rf $(NOTEBOOK_DEST)/$(NOTEBOOK_FILENAME)
+	@rm -rf $(NOTEBOOK_DEST)
 	@rm -rf $(JS_DEST)
 	@rm -rf $(CSS_DEST)
 	@rm -rf $(SASS_DEST)
 	@rm -rf $(IMAGES_DEST)
+	@rm -rf $(DOCS_DEST)
 	@echo "✓ Distribution cleaned (source files preserved in _projects/$(PROJECT_NAME))"
 
 ###########################################

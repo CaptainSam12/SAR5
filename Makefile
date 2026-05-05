@@ -437,6 +437,13 @@ watch-projects:
 					cp "_projects/_template/Makefile" "_projects/$$proj/Makefile"; \
 				fi; \
 				make -C "_projects/$$proj" build; \
+				proj_name=$$(basename $$proj); \
+				if [ -d "_notebooks/projects/$$proj_name" ]; then \
+					find "_notebooks/projects/$$proj_name" -name '*.ipynb' -newer /tmp/.project_watch_marker 2>/dev/null | while read notebook; do \
+						echo "Converting project notebook: $$notebook"; \
+						make convert-single NOTEBOOK_FILE="$$notebook" 2>&1; \
+					done; \
+				fi; \
 				touch /tmp/.jekyll_rebuild_trigger; \
 			fi; \
 		done; \
@@ -444,10 +451,9 @@ watch-projects:
 		sleep 2; \
 	done
 
-# Bundle install (only runs if Gemfile changed)
+# Bundle install (dependency for jekyll-serve)
 bundle-install:
-	@if [ ! -f .bundle/install_marker ] || [ Gemfile -nt .bundle/install_marker ]; then \
-		echo "Installing bundle..."; \
+	@if [ ! -f .bundle/install_marker ] || [ Gemfile -nt .bundle/install_marker ] || [ Gemfile.lock -nt .bundle/install_marker ]; then \
 		bundle install; \
 		mkdir -p .bundle && touch .bundle/install_marker; \
 	fi
