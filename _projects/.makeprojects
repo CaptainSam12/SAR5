@@ -10,30 +10,30 @@
 
 # === NESTED STRUCTURE (organized by category) ===
 # Games
+games/backgrounds
+games/barriers-spline-sorcerers
+games/characters
+games/collisions-mechanic
 games/cs-pathway:dev
+games/enemy-death
+games/game-in-game-lesson
 games/gamify
-games/peppa-pig
-games/red-riding
+games/local-storage
+games/multiplayer
 games/ocean
+games/peppa-pig
+games/platformer-gravity-sorcerers
+games/red-riding
+games/teamtestgame
+games/transitions
 
 # Lessons
 lessons/game-lessons
+lessons/parallelAndComputinglesson
+lessons/robot-logic-game
 
 # Systems
 systems/test-project
 systems/student-management-groups
 
 # === FLAT STRUCTURE (legacy/uncategorized) ===
-characters
-teamtestgame
-game-in-game-lesson
-barriers-spline-sorcerers
-platformer-gravity-sorcerers
-backgrounds
-multiplayer
-transitions
-robot-logic-game
-parallelAndComputinglesson
-collisions-mechanic
-local-storage
-enemy-death
