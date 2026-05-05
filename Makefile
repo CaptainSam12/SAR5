@@ -347,11 +347,11 @@ watch-rebuild:
 		if [ -f /tmp/.jekyll_rebuild_trigger ]; then \
 			TRIGGER_TIME=$$(stat -f %m /tmp/.jekyll_rebuild_trigger 2>/dev/null || stat -c %Y /tmp/.jekyll_rebuild_trigger); \
 			if [ $$TRIGGER_TIME -gt $$LAST_TRIGGER ]; then \
-				echo "⏳ Changes detected, waiting for more changes to settle..."; \
+				echo "Changes detected, waiting for more changes to settle..."; \
 				sleep 3; \
 				NEW_TRIGGER=$$(stat -f %m /tmp/.jekyll_rebuild_trigger 2>/dev/null || stat -c %Y /tmp/.jekyll_rebuild_trigger); \
 				if [ $$NEW_TRIGGER -eq $$TRIGGER_TIME ]; then \
-					echo "🔨 Rebuilding Jekyll site..."; \
+					echo "🔨Rebuilding Jekyll site..."; \
 					START=$$(date +%s); \
 					rm -f /tmp/.jekyll_rebuild_done; \
 					(bundle exec jekyll build --incremental > /tmp/.jekyll_rebuild_log 2>&1; touch /tmp/.jekyll_rebuild_done) & \
@@ -434,14 +434,7 @@ bundle-install:
 jekyll-serve: bundle-install
 	@touch /tmp/.notebook_watch_marker
 	@rm -f /tmp/.jekyll_rebuild_trigger
-	@if [ -f _config.local.yml ]; then \
-		echo "Using local config override: _config.local.yml"; \
-		bundle exec jekyll serve -H $(HOST) -P $(PORT) --no-watch --config _config.yml,_config.local.yml > $(LOG_FILE) 2>&1 & \
-		echo "Server PID: $$!"; \
-	else \
-		bundle exec jekyll serve -H $(HOST) -P $(PORT) --no-watch > $(LOG_FILE) 2>&1 & \
-		echo "Server PID: $$!"; \
-	fi
+	bundle exec jekyll serve -H $(HOST) -P $(PORT) --no-watch > $(LOG_FILE) 2>&1 &
 	@make wait-for-server
 
 # Common server wait logic
