@@ -110,18 +110,6 @@ Expected outputs:
 
 ## Troubleshooting
 
-### fswatch Not Found
-If you see: `⚠️ fswatch not installed`
-
-```bash
-# macOS:
-brew install fswatch
-
-# Linux:
-sudo apt-get install fswatch  # Debian/Ubuntu
-sudo yum install fswatch       # RedHat/CentOS
-```
-
 ### Auto-copy Not Working
 1. Check that the project watcher is running via the registered watcher target:
 

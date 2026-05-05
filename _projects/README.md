@@ -36,19 +36,7 @@ Primary SDLC workflow:
 make dev
 ```
 
-This is the main build-and-test loop for development. It starts Jekyll and the registered project watchers so edits are copied, converted, and regenerated automatically.
-
-Before using live regeneration with `make dev`, install `fswatch`:
-
-```bash
-# macOS
-brew install fswatch
-
-# Ubuntu/Debian
-sudo apt install fswatch
-```
-
-Without `fswatch`, the project watcher falls back to manual rebuild instructions instead of auto-regeneration.
+This is the main build-and-test loop for development. It starts Jekyll and the registered project watchers so edits are copied, converted, and regenerated automatically using POSIX timestamp-based file monitoring.
 
 Validate this project after `make dev` when you want to force a full re-copy of distributed files.
 

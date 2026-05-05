@@ -21,11 +21,11 @@ lessons/game-lessons
 
 # Systems
 systems/test-project
+systems/student-management-groups
 
 # === FLAT STRUCTURE (legacy/uncategorized) ===
 characters
 teamtestgame
-student-management-groups
 game-in-game-lesson
 barriers-spline-sorcerers
 platformer-gravity-sorcerers
