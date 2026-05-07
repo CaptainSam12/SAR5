@@ -264,7 +264,7 @@ export class GameExecutor {
       const encodedCode = encodeURIComponent(code);
       const dataUrl = `data:text/javascript;charset=utf-8,${encodedCode}`;
 
-      try {
+      {
         const userModule = await import(dataUrl);
         const GameControl = userModule.GameControl;
         const gameLevelClasses = userModule.gameLevelClasses;
