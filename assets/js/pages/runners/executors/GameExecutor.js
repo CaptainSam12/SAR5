@@ -260,11 +260,12 @@ export class GameExecutor {
       const GameModule = await import(baseUrl + '/assets/js/' + selectedVersion + '/essentials/Game.js');
       const Game = GameModule.default;
 
-      const blob = new Blob([code], { type: 'application/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
+      // Use data URL instead of blob URL for better compatibility with CSP
+      const encodedCode = encodeURIComponent(code);
+      const dataUrl = `data:text/javascript;charset=utf-8,${encodedCode}`;
 
       try {
-        const userModule = await import(blobUrl);
+        const userModule = await import(dataUrl);
         const GameControl = userModule.GameControl;
         const gameLevelClasses = userModule.gameLevelClasses;
 
@@ -330,8 +331,6 @@ export class GameExecutor {
             this.updateStatus('Running');
           }
         }, 200);
-      } finally {
-        URL.revokeObjectURL(blobUrl);
       }
     } catch (error) {
       this.updateStatus('Error: ' + error.message);
