@@ -25,6 +25,9 @@ const ZONE_COLORS = [
 const RANK_TITLES = ['','Stowaway','Deckhand','Sailor','Bosun','Quartermaster',
                      'First Commander','Master Gunner','Captain','Admiral','Pirate King'];
 
+const LEADERBOARD_KEY = 'pirate-hunt-leaderboard-v1';
+const LEADERBOARD_SIZE = 5;
+
 // ══════════════════════════════════════════════════════════════════════════════
 // CSS — injected once, mirrors MarketPirateGame style conventions
 // ══════════════════════════════════════════════════════════════════════════════
@@ -184,6 +187,50 @@ const GAME_CSS = `
   z-index:8950;opacity:0;transition:opacity .2s;pointer-events:none;
 }
 #bbc-beam-warn.bbc-warn-show{opacity:1;}
+
+.bbc-leaderboard-wrapper{
+  width:100%;max-width:340px;
+  border:1px solid rgba(180,140,80,0.25);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:rgba(0,0,0,0.33);
+}
+.bbc-leaderboard-title{
+  font-family:'Cinzel Decorative',cursive;
+  font-size:13px;
+  letter-spacing:1.5px;
+  text-align:center;
+  color:#f0c030;
+}
+.bbc-leaderboard-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.bbc-leaderboard-entry{
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  font-size:12px;
+  color:#f4e2a3;
+}
+.bbc-leaderboard-rank{
+  font-weight:700;
+  color:#ffd670;
+}
+.bbc-leaderboard-meta{
+  text-align:right;
+  color:#d7c28c;
+}
+.bbc-leaderboard-empty{
+  color:rgba(235,215,175,0.75);
+  font-size:12px;
+  text-align:center;
+}
 
 /* ZONE FLASH */
 #bbc-zone-flash{
@@ -387,6 +434,67 @@ class newlevel {
     document.head.appendChild(s);
   }
 
+  _loadLeaderboard() {
+    try {
+      return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
+    } catch (e) {
+      console.warn('Leaderboard load failed:', e);
+      return [];
+    }
+  }
+
+  _saveLeaderboard(scores) {
+    try {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(scores.slice(0, LEADERBOARD_SIZE)));
+    } catch (e) {
+      console.warn('Leaderboard save failed:', e);
+    }
+  }
+
+  _addLeaderboardEntry(name, time, coins, difficulty) {
+    const entry = { name, time, coins, difficulty, when: Date.now() };
+    const scores = this._loadLeaderboard();
+    scores.push(entry);
+    scores.sort((a, b) => {
+      if (a.time !== b.time) return a.time - b.time;
+      return b.coins - a.coins;
+    });
+    this._saveLeaderboard(scores);
+    return scores.slice(0, LEADERBOARD_SIZE);
+  }
+
+  _renderLeaderboard() {
+    const list = document.getElementById('bbc-leaderboard-list');
+    if (!list) return;
+    const scores = this._loadLeaderboard();
+    if (!scores.length) {
+      list.innerHTML = '<div class="bbc-leaderboard-empty">No results yet. Finish the game to add a score.</div>';
+      return;
+    }
+
+    list.innerHTML = scores.map((entry, index) => {
+      return `
+        <div class="bbc-leaderboard-entry">
+          <div class="bbc-leaderboard-rank">${index + 1}</div>
+          <div class="bbc-leaderboard-name">${entry.name}</div>
+          <div class="bbc-leaderboard-meta">${Math.floor(entry.time)}s · ${entry.coins}⚓</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  _submitLeaderboard() {
+    const name = this._playerName || 'Sailor';
+    const scores = this._addLeaderboardEntry(name, Math.floor(this._elapsed), this._coinsGot, this._difficulty);
+    this._renderLeaderboard();
+    const top = scores[0];
+    if (top && top.name === name && top.time === Math.floor(this._elapsed) && top.coins === this._coinsGot) {
+      document.getElementById('bbc-win-sub').textContent = `New leaderboard entry! ${name} — ${Math.floor(this._elapsed)}s, ${this._coinsGot}⚓`;
+    } else {
+      document.getElementById('bbc-win-sub').textContent = `Score saved: ${name} — ${Math.floor(this._elapsed)}s, ${this._coinsGot}⚓`;
+    }
+  }
+
   _buildDOM() {
     this._root = this.gameEnv?.gameContainer || document.body;
 
@@ -408,12 +516,17 @@ class newlevel {
           <button class="bbc-diff-btn" data-diff="hard">☠ Hard</button>
         </div>
         <button class="bbc-play-btn" id="bbc-start-btn">⚓ Set Sail</button>
+        <div class="bbc-leaderboard-wrapper" id="bbc-leaderboard-wrapper">
+          <div class="bbc-leaderboard-title">Leader Board</div>
+          <div id="bbc-leaderboard-list" class="bbc-leaderboard-list"></div>
+          <button class="bbc-end-btn bbc-reset-lb-btn" id="bbc-reset-lb-btn">🗑️ Clear Leaderboard</button>
+        </div>
         <div class="bbc-controls">
           WASD / Arrow Keys · Space / W to jump · Double-jump allowed<br>
           Reach the <span style="color:#f0c030">⚑ END FLAG</span> to escape Blackbeard!
         </div>
       </div>`;
-    document.body.appendChild(this._menuScreen);
+    this._root.appendChild(this._menuScreen);
 
     // ── Game Over ──
     this._goScreen = this._el('div', 'bbc-screen bbc-hidden', 'bbc-go-screen');
@@ -518,6 +631,7 @@ class newlevel {
     this._zoneFlash = this._el('div', '', 'bbc-zone-flash');
     this._zoneFlash.innerHTML = '<div id="bbc-zone-inner"></div>';
     this._root.appendChild(this._zoneFlash);
+    this._renderLeaderboard();
   }
 
   _el(tag, cls, id) {
@@ -543,6 +657,14 @@ class newlevel {
         this._difficulty = btn.dataset.diff;
       });
     });
+
+    const resetBtn = document.getElementById('bbc-reset-lb-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        this._saveLeaderboard([]);
+        this._renderLeaderboard();
+      });
+    }
   }
 
   _startGame() {
@@ -1066,6 +1188,7 @@ class newlevel {
       document.getElementById('bbc-win-coins').textContent = this._coinsGot;
       document.getElementById('bbc-win-hits').textContent  = this._hitsTaken;
 
+      this._submitLeaderboard();
       this._winScreen.classList.remove('bbc-hidden');
       requestAnimationFrame(() => this._winScreen.classList.add('bbc-show'));
 
