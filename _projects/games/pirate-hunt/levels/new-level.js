@@ -232,6 +232,53 @@ const GAME_CSS = `
   text-align:center;
 }
 
+/* FLOATING LEADERBOARD */
+#bbc-floating-lb{
+  position:fixed;right:16px;top:60px;z-index:8880;
+  width:320px;max-height:calc(100vh - 90px);
+  background:linear-gradient(145deg,rgba(20,10,5,0.94),rgba(10,5,2,0.96));
+  border:2px solid rgba(200,140,60,0.4);border-radius:12px;
+  padding:12px;display:flex;flex-direction:column;gap:10px;
+  box-shadow:0 0 40px rgba(0,0,0,0.7),inset 0 0 20px rgba(200,100,0,0.05);
+  font-family:'IM Fell English',serif;color:#f4e2a3;
+  transition:right 0.3s ease,opacity 0.3s ease;
+}
+#bbc-floating-lb.bbc-hidden{right:-340px;opacity:0;pointer-events:none;}
+#bbc-floating-lb-header{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding-bottom:8px;border-bottom:1px solid rgba(200,140,60,0.2);
+}
+#bbc-floating-lb-title{
+  font-family:'Cinzel Decorative',cursive;font-size:13px;letter-spacing:1.5px;
+  color:#f0c030;text-shadow:0 0 15px rgba(255,200,0,0.2);
+}
+#bbc-floating-lb-toggle{
+  background:transparent;border:none;color:#f0c030;cursor:pointer;font-size:16px;
+  padding:2px 4px;transition:transform 0.2s;font-family:'Cinzel Decorative',cursive;
+}
+#bbc-floating-lb-toggle:hover{transform:scale(1.1);}
+#bbc-floating-lb-body{
+  display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:280px;
+  padding-right:4px;
+}
+#bbc-floating-lb-body::-webkit-scrollbar{width:6px;}
+#bbc-floating-lb-body::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);border-radius:3px;}
+#bbc-floating-lb-body::-webkit-scrollbar-thumb{background:rgba(200,140,60,0.3);border-radius:3px;}
+#bbc-floating-lb-body::-webkit-scrollbar-thumb:hover{background:rgba(200,140,60,0.5);}
+.bbc-floating-entry{
+  display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:8px;
+  align-items:center;font-size:11px;padding:8px;background:rgba(0,0,0,0.3);
+  border:1px solid rgba(200,140,60,0.15);border-radius:6px;transition:background 0.2s;
+}
+.bbc-floating-entry:hover{background:rgba(200,140,60,0.15);}
+.bbc-floating-rank{font-weight:700;color:#ffd670;width:20px;text-align:center;}
+.bbc-floating-name{color:#f0c030;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bbc-floating-score{color:#d7c28c;text-align:right;white-space:nowrap;font-size:10px;}
+.bbc-floating-empty{
+  color:rgba(235,215,175,0.5);font-size:10px;text-align:center;padding:20px 8px;
+  font-style:italic;
+}
+
 /* ZONE FLASH */
 #bbc-zone-flash{
   position:absolute;inset:0;z-index:8960;
@@ -487,12 +534,32 @@ class newlevel {
     const name = this._playerName || 'Sailor';
     const scores = this._addLeaderboardEntry(name, Math.floor(this._elapsed), this._coinsGot, this._difficulty);
     this._renderLeaderboard();
+    this._updateFloatingLeaderboard();
     const top = scores[0];
     if (top && top.name === name && top.time === Math.floor(this._elapsed) && top.coins === this._coinsGot) {
       document.getElementById('bbc-win-sub').textContent = `New leaderboard entry! ${name} — ${Math.floor(this._elapsed)}s, ${this._coinsGot}⚓`;
     } else {
       document.getElementById('bbc-win-sub').textContent = `Score saved: ${name} — ${Math.floor(this._elapsed)}s, ${this._coinsGot}⚓`;
     }
+  }
+
+  _updateFloatingLeaderboard() {
+    const body = document.getElementById('bbc-floating-lb-body');
+    if (!body) return;
+    const scores = this._loadLeaderboard();
+    if (!scores.length) {
+      body.innerHTML = '<div class="bbc-floating-empty">No scores yet</div>';
+      return;
+    }
+    body.innerHTML = scores.map((entry, index) => {
+      return `
+        <div class="bbc-floating-entry">
+          <div class="bbc-floating-rank">${index + 1}</div>
+          <div class="bbc-floating-name">${entry.name.substring(0, 12)}</div>
+          <div class="bbc-floating-score">${Math.floor(entry.time)}s</div>
+        </div>
+      `;
+    }).join('');
   }
 
   _buildDOM() {
@@ -631,6 +698,18 @@ class newlevel {
     this._zoneFlash = this._el('div', '', 'bbc-zone-flash');
     this._zoneFlash.innerHTML = '<div id="bbc-zone-inner"></div>';
     this._root.appendChild(this._zoneFlash);
+
+    // ── Floating leaderboard ──
+    this._floatingLb = this._el('div', 'bbc-hidden', 'bbc-floating-lb');
+    this._floatingLb.innerHTML = `
+      <div id="bbc-floating-lb-header">
+        <div id="bbc-floating-lb-title">⚓ Leaderboard</div>
+        <button id="bbc-floating-lb-toggle" title="Toggle">〰</button>
+      </div>
+      <div id="bbc-floating-lb-body"></div>
+    `;
+    this._root.appendChild(this._floatingLb);
+
     this._renderLeaderboard();
   }
 
@@ -665,6 +744,13 @@ class newlevel {
         this._renderLeaderboard();
       });
     }
+
+    const floatingToggle = document.getElementById('bbc-floating-lb-toggle');
+    if (floatingToggle) {
+      floatingToggle.addEventListener('click', () => {
+        this._floatingLb.classList.toggle('bbc-hidden');
+      });
+    }
   }
 
   _startGame() {
@@ -674,7 +760,9 @@ class newlevel {
     this._menuScreen.classList.add('bbc-hidden');
     this._canvas.classList.add('bbc-canvas-visible');
     this._hud.classList.add('bbc-hud-visible');
+    this._floatingLb.classList.remove('bbc-hidden');
 
+    this._updateFloatingLeaderboard();
     this._resizeCanvas();
     this._initGameState();
     this._gameActive = true;
@@ -1165,6 +1253,7 @@ class newlevel {
       document.getElementById('bbc-go-time').textContent = Math.floor(this._elapsed) + 's';
       document.getElementById('bbc-go-coins').textContent = this._coinsGot;
 
+      this._floatingLb.classList.add('bbc-hidden');
       this._goScreen.classList.remove('bbc-hidden');
       requestAnimationFrame(() => this._goScreen.classList.add('bbc-show'));
 
@@ -1189,6 +1278,7 @@ class newlevel {
       document.getElementById('bbc-win-hits').textContent  = this._hitsTaken;
 
       this._submitLeaderboard();
+      this._floatingLb.classList.add('bbc-hidden');
       this._winScreen.classList.remove('bbc-hidden');
       requestAnimationFrame(() => this._winScreen.classList.add('bbc-show'));
 
