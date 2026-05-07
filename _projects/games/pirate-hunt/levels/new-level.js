@@ -740,20 +740,33 @@ class newlevel {
   }
 
   _startGame() {
-    const raw = document.getElementById('bbc-name-input').value.trim();
-    this._playerName = (raw.length > 0 && /[a-zA-Z0-9]/.test(raw)) ? raw : 'Sailor';
+    try {
+      const raw = document.getElementById('bbc-name-input')?.value?.trim() || '';
+      this._playerName = (raw.length > 0 && /[a-zA-Z0-9]/.test(raw)) ? raw : 'Sailor';
 
-    this._menuScreen.classList.add('bbc-hidden');
-    this._canvas.classList.add('bbc-canvas-visible');
-    this._hud.classList.add('bbc-hud-visible');
+      const menu = document.getElementById('bbc-menu-screen');
+      const canvas = document.getElementById('bbc-canvas');
+      const hud = document.getElementById('bbc-hud');
+      if (!menu || !canvas || !hud) {
+        console.error('Game elements not found');
+        return;
+      }
 
-    this._updateFloatingLeaderboard();
-    this._resizeCanvas();
-    this._initGameState();
-    this._gameActive = true;
-    this._lastTs = performance.now();
-    cancelAnimationFrame(this._raf);
-    this._raf = requestAnimationFrame(ts => this._tick(ts));
+      menu.classList.add('bbc-hidden');
+      canvas.classList.add('bbc-canvas-visible');
+      hud.classList.add('bbc-hud-visible');
+
+      this._updateFloatingLeaderboard();
+      this._resizeCanvas();
+      this._initGameState();
+      this._gameActive = true;
+      this._lastTs = performance.now();
+      this._startTs = performance.now();
+      cancelAnimationFrame(this._raf);
+      this._raf = requestAnimationFrame(ts => this._tick(ts));
+    } catch (e) {
+      console.error('Failed to start game:', e);
+    }
   }
 
   _resizeCanvas() {
@@ -890,12 +903,18 @@ class newlevel {
     if (right) p.facing =  1;
     if (left)  p.facing = -1;
 
+    // Walking particles — spawn dust when moving on ground
+    if (p.onGround && Math.abs(p.vx) > 1.5 && Math.random() < 0.15) {
+      const dustX = p.x + p.w/2 + (Math.random()-0.5)*10;
+      const dustY = p.y + p.h + 2;
+      this._spawnParticles(dustX, dustY, '#9a7d6e', 2, 0.3);
+    }
+
     // Jump — jump buffer so it feels snappy
     if (jump && !this._jumpHeld && p.jumpsLeft > 0) {
       p.vy = JUMP_V * (p.jumpsLeft === 2 ? 1.0 : 0.88);
       p.jumpsLeft--;
       p.onGround = false;
-      this._spawnParticles(p.x + p.w/2, p.y + p.h, '#60c0ff', 6, 0.5);
     }
     this._jumpHeld = jump;
 
