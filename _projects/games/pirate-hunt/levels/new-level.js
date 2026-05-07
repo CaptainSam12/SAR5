@@ -243,20 +243,14 @@ const GAME_CSS = `
   font-family:'IM Fell English',serif;color:#f4e2a3;
   transition:right 0.3s ease,opacity 0.3s ease;
 }
-#bbc-floating-lb.bbc-hidden{right:-340px;opacity:0;pointer-events:none;}
 #bbc-floating-lb-header{
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
   padding-bottom:8px;border-bottom:1px solid rgba(200,140,60,0.2);
 }
 #bbc-floating-lb-title{
   font-family:'Cinzel Decorative',cursive;font-size:13px;letter-spacing:1.5px;
   color:#f0c030;text-shadow:0 0 15px rgba(255,200,0,0.2);
 }
-#bbc-floating-lb-toggle{
-  background:transparent;border:none;color:#f0c030;cursor:pointer;font-size:16px;
-  padding:2px 4px;transition:transform 0.2s;font-family:'Cinzel Decorative',cursive;
-}
-#bbc-floating-lb-toggle:hover{transform:scale(1.1);}
 #bbc-floating-lb-body{
   display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:280px;
   padding-right:4px;
@@ -700,11 +694,10 @@ class newlevel {
     this._root.appendChild(this._zoneFlash);
 
     // ── Floating leaderboard ──
-    this._floatingLb = this._el('div', 'bbc-hidden', 'bbc-floating-lb');
+    this._floatingLb = this._el('div', '', 'bbc-floating-lb');
     this._floatingLb.innerHTML = `
       <div id="bbc-floating-lb-header">
         <div id="bbc-floating-lb-title">⚓ Leaderboard</div>
-        <button id="bbc-floating-lb-toggle" title="Toggle">〰</button>
       </div>
       <div id="bbc-floating-lb-body"></div>
     `;
@@ -744,13 +737,6 @@ class newlevel {
         this._renderLeaderboard();
       });
     }
-
-    const floatingToggle = document.getElementById('bbc-floating-lb-toggle');
-    if (floatingToggle) {
-      floatingToggle.addEventListener('click', () => {
-        this._floatingLb.classList.toggle('bbc-hidden');
-      });
-    }
   }
 
   _startGame() {
@@ -760,7 +746,6 @@ class newlevel {
     this._menuScreen.classList.add('bbc-hidden');
     this._canvas.classList.add('bbc-canvas-visible');
     this._hud.classList.add('bbc-hud-visible');
-    this._floatingLb.classList.remove('bbc-hidden');
 
     this._updateFloatingLeaderboard();
     this._resizeCanvas();
@@ -1253,7 +1238,6 @@ class newlevel {
       document.getElementById('bbc-go-time').textContent = Math.floor(this._elapsed) + 's';
       document.getElementById('bbc-go-coins').textContent = this._coinsGot;
 
-      this._floatingLb.classList.add('bbc-hidden');
       this._goScreen.classList.remove('bbc-hidden');
       requestAnimationFrame(() => this._goScreen.classList.add('bbc-show'));
 
@@ -1278,7 +1262,6 @@ class newlevel {
       document.getElementById('bbc-win-hits').textContent  = this._hitsTaken;
 
       this._submitLeaderboard();
-      this._floatingLb.classList.add('bbc-hidden');
       this._winScreen.classList.remove('bbc-hidden');
       requestAnimationFrame(() => this._winScreen.classList.add('bbc-show'));
 
