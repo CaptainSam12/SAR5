@@ -147,7 +147,7 @@ const GAME_CSS = `
 
 /* HUD BAR */
 #bbc-hud{
-  position:fixed;bottom:0;left:0;right:0;height:60px;
+  position:absolute;bottom:0;left:0;right:0;height:60px;
   display:none;align-items:stretch;
   background:rgba(6,3,1,0.97);border-top:1.5px solid #5a2e06;
   z-index:8900;font-family:'Cinzel Decorative',cursive;
@@ -176,7 +176,7 @@ const GAME_CSS = `
 
 /* BEAM WARNING */
 #bbc-beam-warn{
-  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);
   font-family:'Cinzel Decorative',cursive;font-size:13px;letter-spacing:2px;
   color:#ff4020;text-shadow:0 0 20px rgba(255,80,20,.8);
   padding:7px 20px;background:rgba(120,10,0,.88);
@@ -187,7 +187,7 @@ const GAME_CSS = `
 
 /* ZONE FLASH */
 #bbc-zone-flash{
-  position:fixed;inset:0;z-index:8960;
+  position:absolute;inset:0;z-index:8960;
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;opacity:0;transition:opacity .3s;
 }
@@ -202,8 +202,11 @@ const GAME_CSS = `
 
 /* CANVAS */
 #bbc-canvas{
-  display:none;position:relative;margin:0 auto;
-  width:800px;height:600px;max-width:100%;max-height:calc(100vh - 60px);
+  display:none;
+  position:absolute;
+  top:0;left:0;
+  width:100%;
+  height:100%;
   image-rendering:pixelated;
   background:#000;
   border:2px solid #333;
@@ -385,6 +388,8 @@ class newlevel {
   }
 
   _buildDOM() {
+    this._root = this.gameEnv?.gameContainer || document.body;
+
     // ── Menu ──
     this._menuScreen = this._el('div', 'bbc-screen', 'bbc-menu-screen');
     this._menuScreen.innerHTML = `
@@ -424,7 +429,7 @@ class newlevel {
         </div>
         <button class="bbc-end-btn" id="bbc-retry-btn">⚓ Try Again</button>
       </div>`;
-    document.body.appendChild(this._goScreen);
+    this._root.appendChild(this._goScreen);
 
     // ── Win ──
     this._winScreen = this._el('div', 'bbc-screen bbc-hidden', 'bbc-win-screen');
@@ -440,11 +445,11 @@ class newlevel {
         </div>
         <button class="bbc-end-btn bbc-win-btn" id="bbc-again-btn">🌊 Play Again</button>
       </div>`;
-    document.body.appendChild(this._winScreen);
+    this._root.appendChild(this._winScreen);
 
     // ── Canvas ──
     this._canvas = this._el('canvas', '', 'bbc-canvas');
-    document.body.appendChild(this._canvas);
+    this._root.appendChild(this._canvas);
     this._ctx = this._canvas.getContext('2d');
 
     // ── HUD ──
@@ -502,17 +507,17 @@ class newlevel {
           <div class="bbc-h-sub" id="bbc-prog-text">0%</div>
         </div>
       </div>`;
-    document.body.appendChild(this._hud);
+    this._root.appendChild(this._hud);
 
     // ── Beam warning ──
     this._beamWarn = this._el('div', '', 'bbc-beam-warn');
     this._beamWarn.textContent = '☠ BEAM INCOMING ☠';
-    document.body.appendChild(this._beamWarn);
+    this._root.appendChild(this._beamWarn);
 
     // ── Zone flash ──
     this._zoneFlash = this._el('div', '', 'bbc-zone-flash');
     this._zoneFlash.innerHTML = '<div id="bbc-zone-inner"></div>';
-    document.body.appendChild(this._zoneFlash);
+    this._root.appendChild(this._zoneFlash);
   }
 
   _el(tag, cls, id) {
@@ -557,8 +562,15 @@ class newlevel {
   }
 
   _resizeCanvas() {
-    this._canvas.width  = 800;
-    this._canvas.height = 600;
+    const parent = this._canvas.parentElement;
+    if (parent) {
+      const bounds = parent.getBoundingClientRect();
+      this._canvas.width  = Math.max(320, Math.floor(bounds.width));
+      this._canvas.height = Math.max(240, Math.floor(bounds.height));
+    } else {
+      this._canvas.width  = window.innerWidth;
+      this._canvas.height = window.innerHeight - 60;
+    }
     this._W = this._canvas.width;
     this._H = this._canvas.height;
   }
