@@ -2,9 +2,6 @@ import GameEnvBackground from '@assets/js/GameEnginev1.1/essentials/GameEnvBackg
 import Player from '@assets/js/GameEnginev1.1/essentials/Player.js';
 
 
-// ══════════════════════════════════════════════════════════════════════════════
-// CONSTANTS & CONFIG
-// ══════════════════════════════════════════════════════════════════════════════
 const TILE   = 48;
 const GRAV   = 0.58;
 const JUMP_V = -13.8;
@@ -36,9 +33,9 @@ const GAME_CSS = `
 
 /* ── SCREENS ─────────────────────────────────────────────────────────────── */
 .bbc-screen{
-  position:fixed;inset:0;z-index:9000;
+  position:absolute;top:0;left:0;right:0;bottom:0;
   display:flex;align-items:center;justify-content:center;
-  font-family:'IM Fell English',serif;
+  font-family:'IM Fell English',serif;z-index:9000;
 }
 .bbc-screen.bbc-hidden{display:none;}
 
@@ -205,10 +202,11 @@ const GAME_CSS = `
 
 /* CANVAS */
 #bbc-canvas{
-  display:none;position:fixed;top:0;left:0;
-  width:100vw;height:calc(100vh - 60px);
+  display:none;position:relative;margin:0 auto;
+  width:800px;height:600px;max-width:100%;max-height:calc(100vh - 60px);
   image-rendering:pixelated;
   background:#000;
+  border:2px solid #333;
 }
 #bbc-canvas.bbc-canvas-visible{display:block;}
 `;
@@ -559,8 +557,8 @@ class newlevel {
   }
 
   _resizeCanvas() {
-    this._canvas.width  = window.innerWidth;
-    this._canvas.height = window.innerHeight - 60;
+    this._canvas.width  = 800;
+    this._canvas.height = 600;
     this._W = this._canvas.width;
     this._H = this._canvas.height;
   }
